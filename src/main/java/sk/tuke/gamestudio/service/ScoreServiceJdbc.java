@@ -1,6 +1,7 @@
 package sk.tuke.gamestudio.service;
 
 import sk.tuke.gamestudio.entity.Score;
+import sk.tuke.gamestudio.exceptions.ServiceException;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -23,7 +24,7 @@ public class ScoreServiceJdbc implements ScoreService {
 
         try(
             var connection = DriverManager.getConnection(JDBC_URL,JDBC_USER,JDBC_PASSWORD);
-            var statement = connection.prepareStatement(STATEMENT_ADD_SCORE);
+            var statement = connection.prepareStatement(STATEMENT_ADD_SCORE)
         )
         {
             statement.setString(1, score.getGame());
@@ -32,14 +33,14 @@ public class ScoreServiceJdbc implements ScoreService {
             statement.setTimestamp(4,  new Timestamp(score.getPlayedAt().getTime()));
             statement.executeUpdate();
        }catch(SQLException e){
-            System.out.println(e.getMessage());
+            throw new ServiceException(e);
        }
 
     }
 
     @Override
     public List<Score> getBestScores(String game) {
-        final String STATEMENT_BEST_SCORES = "SELECT game, username, points, played_on FROM score WHERE game= ? ORDER BY points DESC LIMIT 5";
+        final String STATEMENT_BEST_SCORES = "SELECT game, username, points, played_at FROM score WHERE game= ? ORDER BY points DESC LIMIT 5";
 
         try( var connection =DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              var statement = connection.prepareStatement(STATEMENT_BEST_SCORES)
@@ -54,9 +55,8 @@ public class ScoreServiceJdbc implements ScoreService {
                 return scores;
             }
         }catch (SQLException e) {
-            System.out.println(e.getMessage());
+            throw new ServiceException(e);
         }
-        return null;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ScoreServiceJdbc implements ScoreService {
         {
             statement.executeUpdate(STATEMENT_RESET);
         }catch(SQLException e){
-            System.out.println(e.getMessage());
+            throw new ServiceException(e);
         }
     }
 }
