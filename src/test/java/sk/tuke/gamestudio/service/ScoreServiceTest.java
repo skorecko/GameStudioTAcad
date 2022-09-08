@@ -11,11 +11,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ScoreServiceTest {
 
-    private final ScoreService scoreService = new ScoreServiceJdbc();
+    //private final ScoreService scoreService = new ScoreServiceJdbc();
+    private final ScoreService scoreService = new ScoreServiceFile();
+
 
     @Test
     public void testReset(){
         scoreService.addScore(new Score("mines","Feri",123,new Date()));
+
+        boolean atLeastOne=false;
+        if(scoreService.getBestScores("mines").size()>0){
+            atLeastOne=true;
+        }
+        assertTrue(atLeastOne);
+
+        //assertNotEquals(0, scoreService.getBestScores("mines").size());
         scoreService.reset();
         assertEquals(0,scoreService.getBestScores("mines").size());
     }

@@ -15,12 +15,17 @@ public class Field {
 
     private final Tile[][] tiles;
 
+    private int score =0;
+
+    private long startTimeInMs = 0;
+
     public Field(int rowCount, int columnCount, int mineCount) {
         this.rowCount = rowCount;
         this.columnCount = columnCount;
         this.mineCount = mineCount;
         tiles = new Tile[rowCount][columnCount];
         generate();
+        startTimeInMs = System.currentTimeMillis();
     }
 
     private void generate() {
@@ -99,6 +104,12 @@ public class Field {
         return tiles[row][column];
     }
 
+
+    /**
+     * Opens a tile. If the game is not played, also computes the score
+     * @param row
+     * @param column
+     */
     public void openTile(int row, int column) {
         var tile = tiles[row][column];
         if (tile.getState() == TileState.CLOSED) {
@@ -115,6 +126,10 @@ public class Field {
 
             if (rowCount * columnCount - mineCount == openCount)
                 state = FieldState.SOLVED;
+        }
+
+        if(state!=FieldState.PLAYING){
+            score=computeScore();
         }
     }
 
@@ -147,5 +162,26 @@ public class Field {
             if (column + 1 < columnCount)
                 openTile(row + 1, column + 1);
         }
+    }
+
+    private int computeScore(){
+
+        if(this.state==FieldState.SOLVED){
+
+            final long rawScore =
+                    rowCount*columnCount*10 -
+                    (System.currentTimeMillis()-startTimeInMs)/1000;
+            if(rawScore<=0){
+                return 0;
+            }else{
+                return (int) rawScore;
+            }
+        }else{
+            return 0;
+        }
+    }
+
+    public int getScore(){
+        return score;
     }
 }

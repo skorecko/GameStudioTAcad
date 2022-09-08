@@ -1,8 +1,9 @@
 package sk.tuke.gamestudio.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Score {
+public class Score implements Serializable  {
     private String game;
     private String username;
     private int points;

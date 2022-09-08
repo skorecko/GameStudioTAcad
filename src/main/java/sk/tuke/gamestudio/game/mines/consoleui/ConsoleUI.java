@@ -1,10 +1,15 @@
 package sk.tuke.gamestudio.game.mines.consoleui;
 
+import sk.tuke.gamestudio.entity.Score;
 import sk.tuke.gamestudio.game.mines.core.Clue;
 import sk.tuke.gamestudio.game.mines.core.Field;
 import sk.tuke.gamestudio.game.mines.core.FieldState;
 import sk.tuke.gamestudio.game.mines.core.Tile;
+import sk.tuke.gamestudio.service.ScoreService;
+import sk.tuke.gamestudio.service.ScoreServiceJdbc;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -13,17 +18,42 @@ public class ConsoleUI {
 
     private Scanner scanner = new Scanner(System.in);
 
+    private ScoreService scoreService = new ScoreServiceJdbc();
+
     public ConsoleUI(Field field) {
         this.field = field;
     }
 
     public void play() {
+
+
+
         do {
             printField();
             processInput();
         } while (field.getState() == FieldState.PLAYING);
         printField();
-        System.out.println(field.getState());
+        System.out.print(field.getState());
+
+        //vypis score a zapis score do databazy
+        if(field.getState()==FieldState.SOLVED){
+            System.out.printf(" Your score: %d\n", field.getScore());
+            scoreService.addScore(
+                    new Score("mines",
+                            System.getProperty("user.name"),
+                            field.getScore(),
+                            new Date())
+            );
+        }
+
+        //vypis bestScores z databazy
+        List<Score> bestScores = scoreService.getBestScores("mines");
+        System.out.println("Best scores (name, points, played at):");
+        for (var score:bestScores) {
+            System.out.printf("%s %d %tD\n",
+                    score.getUsername(),score.getPoints(),score.getPlayedAt());
+        }
+
     }
 
     private void processInput() {
@@ -86,4 +116,6 @@ public class ConsoleUI {
                     System.out.print("X");
         }
     }
+
+
 }
