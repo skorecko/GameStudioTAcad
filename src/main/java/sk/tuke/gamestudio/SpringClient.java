@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import sk.tuke.gamestudio.game.mines.consoleui.ConsoleUI;
 import sk.tuke.gamestudio.game.mines.core.Field;
 import sk.tuke.gamestudio.service.ScoreService;
+import sk.tuke.gamestudio.service.ScoreServiceJPA;
 import sk.tuke.gamestudio.service.ScoreServiceJdbc;
 
 @SpringBootApplication
@@ -60,7 +61,9 @@ public class SpringClient {
 
     @Bean
     public ScoreService scoreService(){
-        return new ScoreServiceJdbc();
+
+        //return new ScoreServiceJdbc();
+        return new ScoreServiceJPA();
     }
 
 

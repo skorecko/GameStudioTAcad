@@ -1,9 +1,17 @@
 package sk.tuke.gamestudio.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
+@Entity
 public class Score implements Serializable  {
+
+    @Id
+    @GeneratedValue
+    private int ident;
     private String game;
     private String username;
     private int points;
@@ -18,6 +26,10 @@ public class Score implements Serializable  {
         this.username = username;
         this.points = points;
         this.playedAt = playedAt;
+    }
+
+    public int getIdent() {
+        return ident;
     }
 
     public String getGame() {
