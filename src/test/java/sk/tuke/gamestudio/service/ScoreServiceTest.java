@@ -1,12 +1,13 @@
 package sk.tuke.gamestudio.service;
 
-//import org.junit.Test;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import sk.tuke.gamestudio.entity.Score;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+
 
 
 public class ScoreServiceTest {
@@ -19,13 +20,9 @@ public class ScoreServiceTest {
     public void testReset(){
         scoreService.addScore(new Score("mines","Feri",123,new Date()));
 
-        boolean atLeastOne=false;
-        if(scoreService.getBestScores("mines").size()>0){
-            atLeastOne=true;
-        }
-        assertTrue(atLeastOne);
 
-        //assertNotEquals(0, scoreService.getBestScores("mines").size());
+        assertTrue(scoreService.getBestScores("mines").size() > 0);
+
         scoreService.reset();
         assertEquals(0,scoreService.getBestScores("mines").size());
     }
