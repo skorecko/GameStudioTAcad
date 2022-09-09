@@ -17,14 +17,14 @@ public class SpringClient {
         SpringApplication.run(SpringClient.class);
     }
 
-    //@Bean
+    @Bean
     public CommandLineRunner runnerSimple(){
         return args -> {
             System.out.println("Hello from Spring");
         };
     }
 
-    @Bean
+    //@Bean
     public CommandLineRunner runnerMines(ConsoleUI console){
         return args -> {
             console.play();

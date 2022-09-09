@@ -1,19 +1,24 @@
 package sk.tuke.gamestudio.service;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
-
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import sk.tuke.gamestudio.SpringClient;
 import sk.tuke.gamestudio.entity.Score;
 
 import java.util.Date;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = SpringClient.class)
+public class ScoreServiceTestSpring {
 
-
-public class ScoreServiceTest {
-
-    private final ScoreService scoreService = new ScoreServiceJdbc();
-    //private final ScoreService scoreService = new ScoreServiceFile();
+    @Autowired
+    ScoreService scoreService;
 
 
     @Test
