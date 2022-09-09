@@ -1,5 +1,6 @@
 package sk.tuke.gamestudio.game.mines.consoleui;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import sk.tuke.gamestudio.entity.Score;
 import sk.tuke.gamestudio.game.mines.core.Clue;
 import sk.tuke.gamestudio.game.mines.core.Field;
@@ -18,7 +19,10 @@ public class ConsoleUI {
 
     private Scanner scanner = new Scanner(System.in);
 
-    private ScoreService scoreService = new ScoreServiceJdbc();
+    @Autowired
+    private ScoreService scoreService;
+    //private ScoreService scoreService = new ScoreServiceJdbc();
+
 
     public ConsoleUI(Field field) {
         this.field = field;
