@@ -7,9 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import sk.tuke.gamestudio.game.mines.consoleui.ConsoleUI;
 import sk.tuke.gamestudio.game.mines.core.Field;
-import sk.tuke.gamestudio.service.ScoreService;
-import sk.tuke.gamestudio.service.ScoreServiceJPA;
-import sk.tuke.gamestudio.service.ScoreServiceJdbc;
+import sk.tuke.gamestudio.service.*;
 
 @SpringBootApplication
 public class SpringClient {
@@ -18,10 +16,16 @@ public class SpringClient {
         SpringApplication.run(SpringClient.class);
     }
 
-    @Bean
+    //@Bean
     public CommandLineRunner runnerSimple(){
         return args -> {
             System.out.println("Hello from Spring");
+        };
+    }
+    @Bean
+    public CommandLineRunner runnerPlaygroundJPA(PlaygroundJPA console){
+        return args -> {
+            console.play();
         };
     }
 
@@ -37,6 +41,11 @@ public class SpringClient {
         return args -> {
             console.play();
         };
+    }
+
+    @Bean
+    public PlaygroundJPA consolePlaygroundJPA(){
+        return new PlaygroundJPA();
     }
 
     @Bean
@@ -61,12 +70,15 @@ public class SpringClient {
 
     @Bean
     public ScoreService scoreService(){
-
         //return new ScoreServiceJdbc();
         return new ScoreServiceJPA();
     }
 
 
+    @Bean
+    public RatingService ratingService(){
+        return new RatingServiceJPA();
+    }
 
 
 
