@@ -24,8 +24,17 @@ public class Field {
         this.columnCount = columnCount;
         this.mineCount = mineCount;
         tiles = new Tile[rowCount][columnCount];
+        init();
+    }
+
+    /**
+     * initialisation of the field for a new game.
+     * Usable when a new round of the game is needed but the field cannot be re-assigned (e.g. when autowired)
+     */
+    public void init(){
         generate();
         startTimeInMs = System.currentTimeMillis();
+        state = FieldState.PLAYING;
     }
 
     private void generate() {
