@@ -32,6 +32,7 @@ public class Score implements Serializable  {
         return ident;
     }
 
+
     public String getGame() {
         return game;
     }

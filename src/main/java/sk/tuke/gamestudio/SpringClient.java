@@ -2,7 +2,9 @@ package sk.tuke.gamestudio;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import sk.tuke.gamestudio.game.mines.consoleui.ConsoleUI;
@@ -13,7 +15,10 @@ import sk.tuke.gamestudio.service.*;
 public class SpringClient {
 
     public static void main(String[] args){
-        SpringApplication.run(SpringClient.class);
+
+        //SpringApplication.run(SpringClient.class);
+        new SpringApplicationBuilder(SpringClient.class)
+                .web(WebApplicationType.NONE).run(args);
     }
 
     //@Bean
