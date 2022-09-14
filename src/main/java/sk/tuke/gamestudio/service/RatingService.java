@@ -1,8 +1,10 @@
 package sk.tuke.gamestudio.service;
 
+import sk.tuke.gamestudio.entity.Rating;
+
 public interface RatingService {
 
-    void setRating(sk.tuke.gamestudio.entity.Rating rating);
+    void setRating(Rating rating);
 
     int getAverageRating(String game);
 

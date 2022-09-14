@@ -38,14 +38,14 @@ public class SpringClient {
             System.out.println("Hello from Spring");
         };
     }
-    //@Bean
+    @Bean
     public CommandLineRunner runnerPlaygroundJPA(PlaygroundJPA console){
         return args -> {
             console.play();
         };
     }
 
-    @Bean
+    //@Bean
     public CommandLineRunner runnerMines(ConsoleUI console){
         return args -> {
             console.play();
@@ -109,7 +109,8 @@ public class SpringClient {
 
     @Bean
     public RatingService ratingService(){
-        return new RatingServiceJPA();
+        //return new RatingServiceJPA();
+        return new RatingServiceREST();
     }
 
     @Bean

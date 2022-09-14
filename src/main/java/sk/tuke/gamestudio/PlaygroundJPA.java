@@ -12,6 +12,23 @@ import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
+public class PlaygroundJPA {
+
+    @Autowired
+    RatingService ratingService;
+    public void play(){
+        System.out.println("Opening PlaygroundJPA");
+
+        ratingService.setRating(new Rating("tiles","Roumano",4, new Date()));
+
+        System.out.println("ratingService.getAverageRating(\"mines\") "+ratingService.getAverageRating("mines"));
+        System.out.println("ratingService.getRating(\"tiles\",\"Roumano\") "+ratingService.getRating("tiles","Roumano"));
+
+        System.out.println("Closing PlaygroundJPA");
+
+    }
+}
+/*
 @Transactional
 public class PlaygroundJPA {
 
@@ -27,7 +44,7 @@ public class PlaygroundJPA {
 
         List<StudyGroup> studyGroups =
                 entityManager.createQuery("select g from StudyGroup g")
-                                .getResultList();
+                        .getResultList();
 
         int noOfGroups= studyGroups.size();
 
@@ -38,7 +55,7 @@ public class PlaygroundJPA {
         Student student =
                 //new Student("Peter","Trnka",studyGroups.get(1));
                 //new Student("Jon","Nowec",studyGroups.get(0));
-                  new Student("Wen","Noweo",studyGroups.get(2));
+                new Student("Wen","Noweo",studyGroups.get(2));
 
         System.out.println(student);
 
@@ -50,7 +67,7 @@ public class PlaygroundJPA {
 
     }
 }
-
+*/
 
 /*
 public class PlaygroundJPA {

@@ -32,6 +32,10 @@ public class Rating {
         this.ratedAt = ratedAt;
     }
 
+    public Rating(int rating) {
+        this.rating = rating;
+    }
+
     public int getIdent() {
         return ident;
     }
