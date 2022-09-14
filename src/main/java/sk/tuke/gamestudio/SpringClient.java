@@ -7,11 +7,22 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.web.client.RestTemplate;
 import sk.tuke.gamestudio.game.mines.consoleui.ConsoleUI;
 import sk.tuke.gamestudio.game.mines.core.Field;
 import sk.tuke.gamestudio.service.*;
 
 @SpringBootApplication
+
+@ComponentScan(
+        excludeFilters =
+        @ComponentScan.Filter(
+                type= FilterType.REGEX,
+                pattern = "sk.tuke.gamestudio.server.*"
+        )
+)
 public class SpringClient {
 
     public static void main(String[] args){
@@ -27,16 +38,31 @@ public class SpringClient {
             System.out.println("Hello from Spring");
         };
     }
-    @Bean
+    //@Bean
     public CommandLineRunner runnerPlaygroundJPA(PlaygroundJPA console){
         return args -> {
             console.play();
         };
     }
 
-    //@Bean
+    @Bean
     public CommandLineRunner runnerMines(ConsoleUI console){
         return args -> {
+            console.play();
+        };
+    }
+
+    //@Bean
+    /**
+     * THIS RUNNER FAILS because ConsoleUI console is not instantiated as a Spring component
+     * The correct one is runnerMines
+     * Here, console.scoreService will be null because
+     * @Autowired does not work when instantiated
+     * in the classical way (new ConsoleUI ...)
+     */
+    public CommandLineRunner runnerMinesWrong(){
+        return args -> {
+            ConsoleUI console = new ConsoleUI(new Field(9, 9, 1));
             console.play();
         };
     }
@@ -76,7 +102,8 @@ public class SpringClient {
     @Bean
     public ScoreService scoreService(){
         //return new ScoreServiceJdbc();
-        return new ScoreServiceJPA();
+        //return new ScoreServiceJPA();
+        return new ScoreServiceREST();
     }
 
 
@@ -84,6 +111,9 @@ public class SpringClient {
     public RatingService ratingService(){
         return new RatingServiceJPA();
     }
+
+    @Bean
+    public RestTemplate restTemplate(){ return new RestTemplate();}
 
 
 
