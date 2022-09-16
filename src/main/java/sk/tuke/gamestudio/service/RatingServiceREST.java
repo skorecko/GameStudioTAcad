@@ -1,6 +1,7 @@
 package sk.tuke.gamestudio.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 import sk.tuke.gamestudio.entity.Rating;
 import sk.tuke.gamestudio.entity.Score;
@@ -11,11 +12,13 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 public class RatingServiceREST implements RatingService {
-    private final String url="http://localhost:8080/api";
+
 
     @Autowired
-    private RestTemplate restTemplate;
+    RestTemplate restTemplate;
 
+    @Value("${remote.server.api}")
+    private String url;
 
     @Override
     public void setRating(Rating rating) {
@@ -27,9 +30,8 @@ public class RatingServiceREST implements RatingService {
 
     @Override
     public int getAverageRating(String game) {
-        Rating rating
-                = restTemplate
-                .getForEntity(url+"/rating/"+game,Rating.class).getBody();
+        Rating rating =
+        restTemplate.getForEntity(url+"/rating/"+game,Rating.class).getBody();
         return ((Number)rating.getRating()).intValue();
 
     }
@@ -42,6 +44,5 @@ public class RatingServiceREST implements RatingService {
 
     @Override
     public void reset() {
-        throw new UnsupportedOperationException("Reset not supported via web.");
     }
 }

@@ -19,10 +19,10 @@ public class PlaygroundJPA {
     public void play(){
         System.out.println("Opening PlaygroundJPA");
 
-        ratingService.setRating(new Rating("tiles","Roumano",4, new Date()));
+        ratingService.setRating(new Rating("pexeso","Roumano",1, new Date()));
 
         System.out.println("ratingService.getAverageRating(\"mines\") "+ratingService.getAverageRating("mines"));
-        System.out.println("ratingService.getRating(\"tiles\",\"Roumano\") "+ratingService.getRating("tiles","Roumano"));
+        System.out.println("ratingService.getRating(\"pexeso\",\"Roumano\") "+ratingService.getRating("pexeso","Roumano"));
 
         System.out.println("Closing PlaygroundJPA");
 

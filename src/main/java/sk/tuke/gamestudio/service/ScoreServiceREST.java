@@ -1,6 +1,7 @@
 package sk.tuke.gamestudio.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 import sk.tuke.gamestudio.entity.Score;
 
@@ -9,17 +10,15 @@ import java.util.List;
 
 public class ScoreServiceREST implements ScoreService{
 
-    private final String url="http://localhost:8080/api";
-
     @Autowired
-    private RestTemplate restTemplate;
+    RestTemplate restTemplate;
+
+    @Value("${remote.server.api}")
+    private String url;
 
     @Override
     public void addScore(Score score) {
-        restTemplate
-                .postForEntity(url+"/score",
-                        score,
-                        Score.class);
+        restTemplate.postForEntity(url+"/score",score,Score.class);
     }
 
     @Override
