@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gamestudio - Minesweeper</title>
+    <link rel="stylesheet"
+          href="/css/mines.css"
+          media="screen" />
+</head>
+<body>
+
+<!--/*@thymesVar id="minesController" type="sk.tuke.gamestudio.server.controller.MinesController"*/-->
+
+Hello.
+
+
+<main th:utext="${@minesController.htmlField}"></main>
+
+
+<p th:text="${@minesController.currentTime}"></p>
+</body>
+</html>

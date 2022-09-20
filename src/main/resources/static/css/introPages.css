@@ -1,0 +1,163 @@
+/*
+Web Technologies course
+CSS for examples of the "My Favourite Trees" blog with JavaScript
+
+Stefan Korecko, 2022
+DCI FEEI TU Kosice
+*/
+
+/*Basic formatting for the whole page*/
+
+html {
+    font-size: 100%;
+    font-family: "Tw Cen MT", Arial, Helvetica, sans-serif;
+    font-style: normal; /*normal, italic, oblique (obl.-similar to italic*/
+    font-weight: normal; /*normal, bold*/
+    text-align: justify; /*justify, left, right, center*/
+    color: black;
+}
+
+a:link, a:visited{
+    text-decoration: none;
+    color: rgb(63, 38, 0);
+}
+
+a:hover{
+    text-decoration: underline;
+    color: #982d3b;
+}
+
+img {
+    max-width:99%;
+    width: auto;
+    height: auto;
+}
+
+body > * {
+    margin: 0.5rem;
+}
+
+body > header{
+    border-radius: 1rem;
+    padding:0.5rem;
+    text-align:center;
+    background-color: rgb(204,153,0);
+}
+
+
+body > footer{
+    font-size: 0.8rem;
+}
+
+main > article{
+    background-color: rgb(255, 246, 152);
+    border-radius: 1rem;
+    padding: 0.3rem;
+    margin-bottom: 1rem;
+}
+
+main > article > *{
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+main > article > h2{
+    background-color: rgb(253, 255, 162);
+    border-radius: 1rem;
+    margin: 0;
+}
+
+
+/***********************************************************************************************************/
+/*FLEXBOX LAYOUT and media queries for the whole page*/
+body{
+    display: flex;
+    flex-direction: column;
+}
+li{
+    flex-grow: 1; /*aby zabrali celu sirku (to use the whole width)*/
+}
+body > footer{
+    order: 1; /*aby bol posledny. Ostatne maju implicitne hodnotu 0, tzn. sa zobrazia podla poradia v html (To be the last one displayed as the others have implicitly order=0)*/
+}
+
+
+
+@media only screen and (min-width: 600px){
+    body{
+        min-width: 35rem;
+        max-width: 60rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+
+@media only screen and (max-width: 599px){
+    body{
+        width: 100%;
+    }
+}
+
+
+
+
+/***********************************************************************************************************/
+/*Properties related to the dropdown menu*/
+
+.menu {
+    text-align: left;
+    padding-left: 0.5em;
+}
+
+#menuIts{
+    position:absolute;
+    padding: 0.5em;
+    max-width: 8em;
+    min-width: 7em;
+    border-radius: 0.5rem;
+    background-color: rgb(204,153,0);
+}
+
+#menuIts > a {
+    display: block;
+}
+
+#menuTitle{
+    border: 0;
+    background-color: rgb(204,153,0);
+    outline:none;
+}
+
+#menuTitle:hover, #menuIts > a:hover{
+    text-decoration: none;
+    color: #982d3b;
+    background-color: rgb(255,246,214);
+}
+
+.mnHide {display:none;}
+
+.mnShow {display:block;}
+
+
+
+/***********************************************************************************************************/
+/*Properties related to the form and rendered opinions*/
+
+label{
+    vertical-align: top;
+    display: inline-block; /*instead of inline (default) to make the width applicable*/
+    min-width: 5.5em;
+}
+
+form{
+    padding-bottom: 1em;
+}
+
+h3 > i {
+    font-size: 0.8em;
+}
+
+
+
+

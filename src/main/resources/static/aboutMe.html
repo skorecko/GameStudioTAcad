@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Stefan Korecko" />
+    <link rel="stylesheet"
+          href="css/introPages.css"
+          media="screen" />
+
+
+    <title>O mne</title>
+</head>
+
+<body>
+<header>
+    <h1>Moje obľúbené stromy</h1>
+<div class="menu">
+    <button id="menuTitle" onclick="displayOrHideMenu()">Ponuka článkov</button>
+    <nav id="menuIts" class="menu mnHide">
+            <a href="#artUvod">Vitajte!</a>
+            <a href="#artBorovica">Borovica</a>
+            <a href="#artDub">Dub</a>
+    </nav>
+</div>
+
+</header>
+
+
+
+
+<main>
+    <article  id="artUvod">
+        <h2>Vitajte!</h2> <!--Pôvodne tu aj v ďalších articles bolo h1, to však vyvolá warning pri validácii
+                              lebo "all h1 elements are treated as top-level headings by many
+                              screen readers and other tools". -->
+        <p>
+            Vitajte na mojej stránke. Volám sa <b><i>Ján ŠK. Trieska</i>
+        </b>, bývam v <i>Drevníku nad Pilinami</i> a pracujem
+            ako <i>drevorubač</i>. Milujem stromy a preto som sa
+            rozhodol pripraviť pre vás malý prehľad mojich
+            najobľúbenejších.
+        </p>
+        <footer class="menuLink"><a href="#menuTitle">Späť na menu</a></footer>
+    </article>
+
+    <article  id="artBorovica">
+        <h2>Borovica</h2>
+        <figure>
+            <img src="fig/pineBw.png" height="150"
+                 title="obr.borovica" alt="borovica" />
+        </figure>
+
+        <section>
+
+            <header><h2>Základné údaje</h2></header> <!--Podobne ako vyššie, aj tu pôvodne bolo h1 -->
+
+            <p>
+                Borovica je ihličnatý strom s mäkkým drevom. Jej ihličie opadáva každé  2 až 4 roky.
+            </p>
+
+            <dl> <!-- zoznam moze byt iba mimo odsekov -->
+                <dt>Latinský názov: <!-- uzatvaracia znacka nemusi byt uvedena -->
+                <dd>Pinus.
+                <dt>Oddelenie:</dt>
+                <dd>Borovicorasty (ihličiny)</dd>
+                <dt>Čeľaď:</dt>
+                <dd>Borovicovité.</dd>
+
+
+            </dl>
+
+            <article >
+                <h2>Kde rastú borovice</h2><!-- Pôvodne tu nadpis nebol.
+                                                   Ale article by nadpis mal mať
+                                                   (bez neho generuje warning pri validácii) -->
+                <p>Borovice rastú v</p>
+                <ol>
+                    <li>Európe a
+                    <li>Ázii.
+                </ol>
+            </article>
+        </section>
+
+        <section>
+            <h2>Môj názor</h2>
+
+            <p>
+                Borovice mám veľmi rád, lebo
+            </p>
+
+            <ul>
+                <li>majú dlhé ihličie,
+                <li>pekne voňajú a
+                <li>majú mäkké drevo cez ktoré sa dobre prerezáva píla.
+            </ul>
+        </section>
+
+        <footer  class="menuLink"><a href="#menuTitle">Späť na menu</a></footer>
+    </article>
+
+    <article  id="artDub">
+        <h2>Dub</h2>
+        <figure>
+            <img src="fig/oak.png" height="150"
+                 title="obr.dub" alt="dub" />
+        </figure>
+        <p>
+            Dub je listnatý strom s tvrdým drevom, vyznačujúci sa dlhovekosťou a
+            pomalým rastom. Jeho listy sú jednoduché, laločnaté, u nás v zime
+            opadávajú.
+        </p>
+        <footer  class="menuLink"><a href="#menuTitle">Späť na menu</a></footer>
+    </article>
+</main>
+
+<footer>
+    Ján ŠK. Trieska <br>
+    (c) 2017-22
+</footer>
+
+
+<!--
+<iframe  src="50ahojSvet.html" width="300" height="500"
+         name="stranka">
+</iframe>
+-->
+
+<script>
+
+    function displayOrHideMenu(){
+        document.getElementById("menuIts").classList.toggle("mnShow");
+    }
+
+    function hideMenu() {
+        const menuClElmCList=document.getElementById("menuIts").classList;
+        if(menuClElmCList.contains("mnShow")) menuClElmCList.remove("mnShow");
+
+    }
+
+    document.addEventListener("click", //radsej takto ako do document.onclick, lebo to by vyradilo iné listenery
+            function(udalost){
+                if(!udalost.target.matches("#menuIts, #menuTitle")){
+                    console.log("nesedi")
+                    hideMenu();
+                }
+            }
+    );
+
+    document.addEventListener("click", //vypise do konzoly na co som klikol
+            function(udalost){
+                console.log(udalost.target);
+            }
+    );
+
+
+
+    /*
+    * Pozor: ani jeden z listenerov nebude reagovat na kliknutia v dokumentoch, ktore by tu boli vlozene cez iframe.
+    * A to ani v pripade ak document.addEventListener zamenime za window.addEventListener.
+    */
+
+</script>
+
+</body>
+</html>
