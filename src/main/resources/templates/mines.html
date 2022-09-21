@@ -13,12 +13,24 @@
 
 <!--/*@thymesVar id="minesController" type="sk.tuke.gamestudio.server.controller.MinesController"*/-->
 
-Hello.
 
 
-<main th:utext="${@minesController.htmlField}"></main>
+<main>
+    <h2>Minesweeper</h2>
+
+    <div class="minesControl">
+        <span th:text="${@minesController.getGameStatusMessage()}"></span>
+        <a th:if="${@minesController.marking}" class="abutton" href="/mines/mark">Change to open</a>
+        <a th:if="not ${@minesController.marking}" class="abutton" href="/mines/mark">Change to mark</a>
+        <a  class="abutton" href="/mines/new">New game</a>
+    </div>
+
+    <section th:utext="${@minesController.htmlField}">
+
+    </section>
+</main>
 
 
-<p th:text="${@minesController.currentTime}"></p>
+<!--<p th:text="${@minesController.currentTime}"></p>-->
 </body>
 </html>
