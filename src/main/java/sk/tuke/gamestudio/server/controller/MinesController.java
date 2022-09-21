@@ -2,6 +2,7 @@ package sk.tuke.gamestudio.server.controller;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.WebApplicationContext;
@@ -16,13 +17,49 @@ public class MinesController {
 
     private boolean marking=false;
 
-    private Field mineField = new Field(9,9,3);
+    private Field mineField = null;
 
 
     @RequestMapping
     public String processUserInput(@RequestParam(required = false) Integer row,
-                                   @RequestParam(required = false) Integer column){
+                                   @RequestParam(required = false) Integer column,
+                                   Model model){
+        startOrUpdateGame(row,column);
 
+        prepareModel(model);
+
+        return("mines");
+    }
+
+    @RequestMapping("/mark")
+    public String changeMode(Model model){
+        changeGameMode();
+        prepareModel(model);
+        return("mines");
+    }
+
+    @RequestMapping("/new")
+    public String newGame(Model model){
+        startNewGame();
+        prepareModel(model);
+        return("mines");
+    }
+
+    private void changeGameMode(){
+        if(this.mineField.getState()==FieldState.PLAYING){
+            this.marking=!this.marking;
+        }
+    }
+
+    private void startNewGame(){
+        this.marking=false;
+        this.mineField = new Field(9,9,3);
+    }
+
+    private void startOrUpdateGame(Integer row, Integer column){
+        if(this.mineField==null){
+            startNewGame();
+        }
         if(row!=null && column!=null){
 
             if(mineField.getState()==FieldState.PLAYING) {
@@ -34,22 +71,17 @@ public class MinesController {
             }
 
         }
-        return("mines");
+
+
+
     }
 
-    @RequestMapping("/mark")
-    public String changeMode(){
-        this.marking=!this.marking;
-        return("mines");
+    private void prepareModel(Model model){
+        model.addAttribute("marking",this.marking);
+        model.addAttribute("gameStatus",getGameStatusMessage());
+        model.addAttribute("mineFieldTiles",this.mineField.getTiles());
+        model.addAttribute("isPlaying",this.mineField.getState()==FieldState.PLAYING);
     }
-
-    @RequestMapping("/new")
-    public String newGame(){
-        this.marking=false;
-        this.mineField = new Field(9,9,3);
-        return("mines");
-    }
-
 
 //    public String getCurrentTime(){
 //        return new Date().toString();
@@ -63,22 +95,22 @@ public class MinesController {
 
         sb.append("<table class='minefield'> \n");
 
-        int rowCount=mineField.getRowCount();
-        int colCount=mineField.getColumnCount();
+        int rowCount=this.mineField.getRowCount();
+        int colCount=this.mineField.getColumnCount();
 
         for(int row=0;row<rowCount;row++){
             sb.append("<tr>");
             for(int col=0;col<colCount;col++){
-                Tile tile =mineField.getTile(row,col);
+                Tile tile =this.mineField.getTile(row,col);
                 sb.append("<td class='"+getTileClass(tile)+"'>");
 
-                if(tile.getState() != TileState.OPEN && mineField.getState()==FieldState.PLAYING){
+                if(tile.getState() != TileState.OPEN && this.mineField.getState()==FieldState.PLAYING){
                     sb.append("<a href='/mines?row="+row+"&column="+col+"'>");
                 }
 
                 sb.append("<span>"+getTileText(tile)+"</span>");
 
-                if(tile.getState() != TileState.OPEN  && mineField.getState()==FieldState.PLAYING){
+                if(tile.getState() != TileState.OPEN  && this.mineField.getState()==FieldState.PLAYING){
                     sb.append("</a>");
                 }
                 sb.append("</td>\n");
@@ -90,7 +122,8 @@ public class MinesController {
 
     }
 
-    private String getTileClass(Tile tile) {
+    //private String getTileClass(Tile tile) {
+    public String getTileClass(Tile tile) {
         switch (tile.getState()) {
             case OPEN:
                 if (tile instanceof Clue)
@@ -107,7 +140,8 @@ public class MinesController {
     }
 
 
-    private String getTileText(Tile tile) {
+    //private String getTileText(Tile tile) {
+    public String getTileText(Tile tile) {
         switch (tile.getState()) {
             case CLOSED:
                 return "-";

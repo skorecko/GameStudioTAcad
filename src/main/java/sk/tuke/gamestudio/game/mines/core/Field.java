@@ -113,6 +113,9 @@ public class Field {
         return tiles[row][column];
     }
 
+    public Tile[][] getTiles() {
+        return tiles;
+    }
 
     /**
      * Opens a tile. If the game is not played, also computes the score

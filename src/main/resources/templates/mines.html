@@ -10,11 +10,40 @@
           media="screen" />
 </head>
 <body>
-
 <!--/*@thymesVar id="minesController" type="sk.tuke.gamestudio.server.controller.MinesController"*/-->
+<main>
+    <h2>Minesweeper</h2>
+
+    <div class="minesControl">
+        <span th:text="${gameStatus}"></span>
+        <a th:if="${marking}" class="abutton" href="/mines/mark">Change to open</a>
+        <a th:if="not ${marking}" class="abutton" href="/mines/mark">Change to mark</a>
+        <a  class="abutton" href="/mines/new">New game</a>
+    </div>
+
+    <section>
+        <table class='minefield'>
+            <tr th:each="row: ${mineFieldTiles}">
+                <td th:each="tile:${row}" th:attr="class=${@minesController.getTileClass(tile)}">
+                    <a th:if="${tile.isNotOpen()} and ${isPlaying}"
+                       th:attr="href='/mines?row='+${rowStat.index}+'&column='+${tileStat.index}">
+                        <span th:text="${@minesController.getTileText(tile)}"></span>
+                    </a>
+                    <span th:if="not(${tile.isNotOpen()} and ${isPlaying})"
+                          th:text="${@minesController.getTileText(tile)}"></span>
+                </td>
+            </tr>
+        </table>
+    </section>
+</main>
+<!--<p th:text="${@minesController.currentTime}"></p>-->
+</body>
 
 
-
+<!--1. verzia, bez modelu -->
+<!--
+<body>
+&lt;!&ndash;/*@thymesVar id="minesController" type="sk.tuke.gamestudio.server.controller.MinesController"*/&ndash;&gt;
 <main>
     <h2>Minesweeper</h2>
 
@@ -29,8 +58,9 @@
 
     </section>
 </main>
-
-
-<!--<p th:text="${@minesController.currentTime}"></p>-->
+&lt;!&ndash;<p th:text="${@minesController.currentTime}"></p>&ndash;&gt;
 </body>
+-->
+
+
 </html>

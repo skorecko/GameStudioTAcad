@@ -10,4 +10,8 @@ public abstract class Tile {
     void setState(TileState state) {
         this.state = state;
     }
+
+    public boolean isNotOpen(){
+        return this.state != TileState.OPEN;
+    }
 }
