@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layoutGamestudio.html}"
+        lang="en">
+<head>
+  <title>Gamestudio</title>
+</head>
+
+<body>
+<main layout:fragment="content">
+
+  <!--/*@thymesVar id="userController" type="sk.tuke.gamestudio.server.controller.UserController"*/-->
+
+  <form th:if="not ${@userController.logged}" action="/login" method="post">
+    <label for="login">Login: </label> <input id="login" type="text" name="login" required/> <br />
+    <label for="pass">Password: </label> <input id="pass" type="password" name="password" required/> <br />
+    <button type="submit">Log in</button>
+  </form>
+  <h2>Games</h2>
+  <ul>
+    <li><a href="/mines">Minesweeper</a></li>
+  </ul>
+</main>
+</body>
+</html>

@@ -79,9 +79,10 @@ div.minesControl span.gameInfo{
     display: inline-block;
 }
 
-/*Properties of the links we want to look like buttons*/
+/*Properties of the elements we want to look like customized buttons*/
 
-a.abutton {
+
+.abutton {
     border: 1px solid darkslategrey;
     display: inline-block;
     width: 8em;
@@ -92,7 +93,7 @@ a.abutton {
     font-weight: normal;
 }
 
-a.abutton:hover {
+.abutton:hover {
     background-color: springgreen;
     text-decoration: none;
     font-weight: normal;
@@ -252,7 +253,3 @@ table.minefield td.mine {
         background-image: url("/fig/minesweeper/mine.svg");
     }
 }
-
-
-
-

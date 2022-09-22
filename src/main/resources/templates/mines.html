@@ -1,16 +1,62 @@
 <!DOCTYPE html>
 <html
         xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout/layoutGamestudio.html}"
+        lang="en">
+<head>
+    <title>Gamestudio - Minesweeper</title>
+</head>
+<body>
+<!--/*@thymesVar id="minesController" type="sk.tuke.gamestudio.server.controller.MinesController"*/-->
+
+
+<main layout:fragment="content">
+    <h2>Minesweeper</h2>
+
+    <div class="minesControl">
+        <span th:text="${gameStatus}"></span>
+        <a th:if="${marking}" class="abutton" href="/mines/mark">Change to open</a>
+        <a th:if="not ${marking}" class="abutton" href="/mines/mark">Change to mark</a>
+        <a  class="abutton" href="/mines/new">New game</a>
+    </div>
+
+    <section>
+        <table class='minefield'>
+            <tr th:each="row: ${mineFieldTiles}">
+                <td th:each="tile:${row}" th:attr="class=${@minesController.getTileClass(tile)}">
+                    <a th:if="${tile.isNotOpen()} and ${isPlaying}"
+                       th:attr="href='/mines?row='+${rowStat.index}+'&column='+${tileStat.index}">
+                        <span th:text="${@minesController.getTileText(tile)}"></span>
+                    </a>
+                    <span th:if="not(${tile.isNotOpen()} and ${isPlaying})"
+                          th:text="${@minesController.getTileText(tile)}"></span>
+                </td>
+            </tr>
+        </table>
+    </section>
+</main>
+
+
+</body>
+</html>
+<!--
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
         lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Gamestudio - Minesweeper</title>
     <link rel="stylesheet"
-          href="/css/mines.css"
+          href="/css/gamestudio.css"
           media="screen" />
 </head>
 <body>
-<!--/*@thymesVar id="minesController" type="sk.tuke.gamestudio.server.controller.MinesController"*/-->
+&lt;!&ndash;/*@thymesVar id="minesController" type="sk.tuke.gamestudio.server.controller.MinesController"*/&ndash;&gt;
+
+<div th:replace="fragments/fragments :: gsheader"/>
+
 <main>
     <h2>Minesweeper</h2>
 
@@ -36,8 +82,13 @@
         </table>
     </section>
 </main>
-<!--<p th:text="${@minesController.currentTime}"></p>-->
+
+<footer th:replace="fragments/fragments :: gsfooter"/>
+
+&lt;!&ndash;<p th:text="${@minesController.currentTime}"></p>&ndash;&gt;
 </body>
+-->
+
 
 
 <!--1. verzia, bez modelu -->
@@ -63,4 +114,3 @@
 -->
 
 
-</html>

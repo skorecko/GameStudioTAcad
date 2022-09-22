@@ -1,5 +1,6 @@
 package sk.tuke.gamestudio.server.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,9 @@ public class MinesController {
     private boolean marking=false;
 
     private Field mineField = null;
+
+    @Autowired
+    private UserController userController;
 
 
     @RequestMapping
