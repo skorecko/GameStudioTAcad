@@ -15,25 +15,12 @@
     <h2>Minesweeper</h2>
 
     <div class="minesControl">
-        <span th:text="${gameStatus}"></span>
-        <a th:if="${marking}" class="abutton" href="/mines/mark">Change to open</a>
-        <a th:if="not ${marking}" class="abutton" href="/mines/mark">Change to mark</a>
-        <a  class="abutton" href="/mines/new">New game</a>
+        <span id="gameStatus"></span>
+        <button type="button" id="btToOpenOrMark" class="abutton" onclick="processModeChangeClick()">Change to mark</button>
+        <button type="button" id="btNewGame" class="abutton" onclick="processNewGameClick()">New Game</button>
     </div>
 
-    <section>
-        <table class='minefield'>
-            <tr th:each="row: ${mineFieldTiles}">
-                <td th:each="tile:${row}" th:attr="class=${@minesController.getTileClass(tile)}">
-                    <a th:if="${tile.isNotOpen()} and ${isPlaying}"
-                       th:attr="href='/mines?row='+${rowStat.index}+'&column='+${tileStat.index}">
-                        <span th:text="${@minesController.getTileText(tile)}"></span>
-                    </a>
-                    <span th:if="not(${tile.isNotOpen()} and ${isPlaying})"
-                          th:text="${@minesController.getTileText(tile)}"></span>
-                </td>
-            </tr>
-        </table>
+    <section id="minesField">
     </section>
 
     <section>
@@ -47,16 +34,48 @@
                 <th>Date and time</th>
             </tr>
             </thead>
-            <tbody>
-            <tr th:each="score: ${bestScores}">
-                <td th:text="${scoreStat.index+1}"></td>
-                <td th:text="${score.username}"></td>
-                <td th:text="${score.points}"></td>
-                <td th:text="${score.playedAt}"></td>
-            </tr>
+            <tbody id="scoresTableBody">
             </tbody>
         </table>
     </section>
+
+    <script type="text/javascript">
+
+        function processModeChangeClick(){
+            let minesFieldElm= document.getElementById("minesField");
+            //minesFieldElm.innerHTML="<b>processModeChangeClick</b>";
+            fetch("/mines/jsonmark")
+            .then(response => {
+                if(response.ok){
+                    return response.json();
+                }else{
+                    return Promise.reject(new Error('Mode change failed. Server answered with status '+response.status));
+                }
+            })
+            .then(field =>{
+                if(field.marking){
+                    document.getElementById("gameStatus").innerHTML="Marking tiles";
+                    document.getElementById("btToOpenOrMark").innerHTML="Change to open";
+                }else{
+                    document.getElementById("gameStatus").innerHTML="Opening tiles";
+                    document.getElementById("btToOpenOrMark").innerHTML="Change to mark";
+                }
+            })
+            .catch(error => {
+                let errorMessage = "Failed to change mode. Details:"+error;
+                document.getElementById("minesField").innerHTML=errorMessage;
+
+            })
+        }
+
+        function processNewGameClick(){
+            let minesFieldElm= document.getElementById("minesField");
+            minesFieldElm.textContent="<i>processNewGameClick</i>";
+
+        }
+
+    </script>
+
 </main>
 
 

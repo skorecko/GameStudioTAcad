@@ -2,12 +2,16 @@ package sk.tuke.gamestudio.server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.WebApplicationContext;
+import sk.tuke.gamestudio.entity.Score;
 import sk.tuke.gamestudio.game.mines.core.*;
+import sk.tuke.gamestudio.service.ScoreService;
 
 import java.util.Date;
 
@@ -22,6 +26,11 @@ public class MinesController {
 
     @Autowired
     private UserController userController;
+
+    @Autowired
+    private ScoreService scoreService;
+
+    private boolean isPlaying = true;
 
 
     @RequestMapping
@@ -49,6 +58,38 @@ public class MinesController {
         return("mines");
     }
 
+    @RequestMapping("/asynch")
+    public String loadInAsynchMode(){
+        startOrUpdateGame(null, null);
+        return("minesAsynch");
+    }
+
+    @RequestMapping(value = "/json", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Field processUserInputJson(@RequestParam(required = false) Integer row,
+                                      @RequestParam(required = false) Integer column){
+        startOrUpdateGame(row,column);
+        this.mineField.setMarking(this.marking);
+        return this.mineField;
+    }
+
+    @RequestMapping(value = "/jsonmark", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Field changeModeJson(){
+        changeGameMode();
+        this.mineField.setMarking(this.marking);
+        return this.mineField;
+    }
+
+    @RequestMapping(value = "/jsonnew", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Field newGameJson(){
+        startNewGame();
+        this.mineField.setMarking(this.marking);
+        return this.mineField;
+    }
+
+
     private void changeGameMode(){
         if(this.mineField.getState()==FieldState.PLAYING){
             this.marking=!this.marking;
@@ -56,6 +97,7 @@ public class MinesController {
     }
 
     private void startNewGame(){
+        this.isPlaying=true;
         this.marking=false;
         this.mineField = new Field(9,9,3);
     }
@@ -76,6 +118,18 @@ public class MinesController {
 
         }
 
+        if(this.mineField.getState()!=FieldState.PLAYING && this.isPlaying){
+            this.isPlaying=false;
+
+            if(this.userController.isLogged() && this.mineField.getState()==FieldState.SOLVED){
+                Score score = new Score("mines",
+                        this.userController.getLoggedUser(),
+                        this.mineField.getScore(),
+                        new Date());
+                this.scoreService.addScore(score);
+            }
+        }
+
 
 
     }
@@ -85,6 +139,7 @@ public class MinesController {
         model.addAttribute("gameStatus",getGameStatusMessage());
         model.addAttribute("mineFieldTiles",this.mineField.getTiles());
         model.addAttribute("isPlaying",this.mineField.getState()==FieldState.PLAYING);
+        model.addAttribute("bestScores",this.scoreService.getBestScores("mines"));
     }
 
 //    public String getCurrentTime(){

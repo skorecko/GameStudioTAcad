@@ -19,6 +19,11 @@ public class Field {
 
     private long startTimeInMs = 0;
 
+    /**
+     * just for sending json
+     */
+    private boolean marking=false;
+
     public Field(int rowCount, int columnCount, int mineCount) {
         this.rowCount = rowCount;
         this.columnCount = columnCount;
@@ -195,5 +200,13 @@ public class Field {
 
     public int getScore(){
         return score;
+    }
+
+    public boolean isMarking() {
+        return marking;
+    }
+
+    public void setMarking(boolean marking) {
+        this.marking = marking;
     }
 }
