@@ -32,6 +32,10 @@ public class MinesController {
 
     private boolean isPlaying = true;
 
+    private boolean wasError=false;
+
+    private String errorMessage="";
+
 
     @RequestMapping
     public String processUserInput(@RequestParam(required = false) Integer row,
@@ -108,11 +112,11 @@ public class MinesController {
         }
         if(row!=null && column!=null){
 
-            if(mineField.getState()==FieldState.PLAYING) {
+            if(this.mineField.getState()==FieldState.PLAYING) {
                 if (marking) {
-                    mineField.markTile(row.intValue(), column.intValue());
+                    this.mineField.markTile(row.intValue(), column.intValue());
                 } else {
-                    mineField.openTile(row.intValue(), column.intValue());
+                    this.mineField.openTile(row.intValue(), column.intValue());
                 }
             }
 
@@ -126,7 +130,13 @@ public class MinesController {
                         this.userController.getLoggedUser(),
                         this.mineField.getScore(),
                         new Date());
-                this.scoreService.addScore(score);
+                try {
+                    this.scoreService.addScore(score);
+                    this.wasError=false;
+                }catch(Exception e){
+                    this.wasError=true;
+                    this.errorMessage="Failed to save score to database. Details:"+e.getMessage();
+                }
             }
         }
 
@@ -135,11 +145,20 @@ public class MinesController {
     }
 
     private void prepareModel(Model model){
+
         model.addAttribute("marking",this.marking);
         model.addAttribute("gameStatus",getGameStatusMessage());
         model.addAttribute("mineFieldTiles",this.mineField.getTiles());
         model.addAttribute("isPlaying",this.mineField.getState()==FieldState.PLAYING);
-        model.addAttribute("bestScores",this.scoreService.getBestScores("mines"));
+        try{
+            model.addAttribute("bestScores",this.scoreService.getBestScores("mines"));
+            this.wasError=false;
+        }catch(Exception  e){
+            this.wasError=true;
+            this.errorMessage="Failed to get best scores from database. Details:"+e.getMessage();
+        }
+        model.addAttribute("wasError",this.wasError);
+        model.addAttribute("errorMessage",this.errorMessage);
     }
 
 //    public String getCurrentTime(){
@@ -194,7 +213,7 @@ public class MinesController {
             case MARKED:
                 return "marked";
             default:
-                throw new RuntimeException("Unexpected tile state");
+                throw new IllegalArgumentException("Unsupported tile state " + tile.getState());
         }
     }
 
@@ -202,16 +221,16 @@ public class MinesController {
     //private String getTileText(Tile tile) {
     public String getTileText(Tile tile) {
         switch (tile.getState()) {
-            case CLOSED:
-                return "-";
-            case MARKED:
-                return "M";
             case OPEN:
                 if (tile instanceof Clue) {
                     return String.valueOf(((Clue) tile).getValue());
                 } else {
                     return "X";
                 }
+            case CLOSED:
+                return "-";
+            case MARKED:
+                return "M";
             default:
                 throw new IllegalArgumentException("Unsupported tile state " + tile.getState());
         }

@@ -41,6 +41,141 @@
 
     <script type="text/javascript">
 
+        const viewElements={
+            gameStatus: document.getElementById("gameStatus"),
+            btToOpenOrMark: document.getElementById("btToOpenOrMark"),
+            minesField: document.getElementById("minesField"),
+            scoresTableBody: document.getElementById("scoresTableBody")
+        }
+
+        const bestScoresUrl="/api/score/mines";
+        const fieldUrl="/mines/json";
+
+
+        fetchAndRenderBestScores(bestScoresUrl,viewElements);
+
+        fetchGameFieldAndRenderAll(fieldUrl,bestScoresUrl,viewElements);
+
+
+        function fetchAndRenderBestScores(getJsonUrl,viewElements){
+            fetch(getJsonUrl)
+                .then(response => {
+                    if(response.ok){
+                        return response.json();
+                    }else{
+                        return Promise.reject(new Error('Best scores acquisition failed. Server answered with status '+response.status));
+                    }
+                })
+                .then(bestScoresData =>{
+                    renderBestScores(bestScoresData, viewElements);
+                })
+                .catch(error => {
+                    let errorMessage = "Failed to get or render best scores. Details:"+error;
+                    viewElements.scoresTableBody.innerHTML=errorMessage;
+
+                })
+        }
+
+        function fetchGameFieldAndRenderAll(getFieldJsonUrl,getBestScoresJsonUrl,viewElements){
+            fetch(getFieldJsonUrl)
+                .then(response => {
+                    if(response.ok){
+                        return response.json();
+                    }else{
+                        return Promise.reject(new Error('Game field acquisition failed. Server answered with status '+response.status));
+                    }
+                })
+                .then(gameFieldData =>{
+                    renderGameField(gameFieldData, viewElements);
+                })
+                .catch(error => {
+                    let errorMessage = "Failed to get or render the game field. Details:"+error;
+                    viewElements.minesField.innerHTML=errorMessage;
+
+                })
+        }
+
+        function renderBestScores(bestScoresData, viewElements){
+
+            const rowCount= bestScoresData.length;
+            let html2render="";
+            for (let row=0;row<rowCount;row++){
+                html2render+=
+                    `
+                    <tr>
+                        <td>${row+1}</td>
+                        <td>${bestScoresData[row].username}</td>
+                        <td>${bestScoresData[row].points}</td>
+                        <td>${bestScoresData[row].playedAt}</td>
+                    </tr>`;
+            }
+            viewElements.scoresTableBody.innerHTML=html2render;
+            //console.log(html2render);
+
+        }
+
+        function renderGameField(gameFieldData, viewElements){
+            console.log(gameFieldData);
+
+            let html2render="<table class='minefield'>\n";
+            for (let row=0;row<gameFieldData.rowCount;row++){
+                html2render+="<tr>\n";
+                for (let col=0;col<gameFieldData.columnCount;col++){
+                    html2render+=
+                        `
+                        <td class ='${getTileClass(gameFieldData.tiles[row][col])}'>
+                            <span>
+                                ${getTileText(gameFieldData.tiles[row][col])}
+                            </span>
+                        </td>
+                        `;
+                }
+                html2render+="</tr>\n";
+            }
+            html2render+="</table>\n";
+
+            viewElements.minesField.innerHTML=html2render;
+            console.log(html2render);
+
+        }
+
+        function  getTileText(tile) {
+            switch (tile.state) {
+                case "OPEN":
+                    if (tile.value!= undefined)
+                        return "" + tile.value;
+                    else
+                        return "X";
+                case "CLOSED":
+                    return "-";
+                case "MARKED":
+                    return "M";
+                default:
+                    return "?";
+            }
+        }
+
+        function  getTileClass(tile) {
+            switch (tile.state) {
+                case "OPEN":
+                    if (tile.value!= undefined)
+                        return "open" + tile.value;
+                else
+                    return "mine";
+                case "CLOSED":
+                    return "closed";
+                case "MARKED":
+                    return "marked";
+                default:
+                    return "unknown";
+            }
+        }
+
+
+
+
+
+
         function processModeChangeClick(){
             let minesFieldElm= document.getElementById("minesField");
             //minesFieldElm.innerHTML="<b>processModeChangeClick</b>";
@@ -81,77 +216,75 @@
 
 </body>
 </html>
+
+
 <!--
-<!DOCTYPE html>
-<html
-        xmlns:th="http://www.thymeleaf.org"
-        lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Gamestudio - Minesweeper</title>
-    <link rel="stylesheet"
-          href="/css/gamestudio.css"
-          media="screen" />
-</head>
-<body>
-&lt;!&ndash;/*@thymesVar id="minesController" type="sk.tuke.gamestudio.server.controller.MinesController"*/&ndash;&gt;
-
-<div th:replace="fragments/fragments :: gsheader"/>
-
-<main>
+<main layout:fragment="content">
     <h2>Minesweeper</h2>
 
     <div class="minesControl">
-        <span th:text="${gameStatus}"></span>
-        <a th:if="${marking}" class="abutton" href="/mines/mark">Change to open</a>
-        <a th:if="not ${marking}" class="abutton" href="/mines/mark">Change to mark</a>
-        <a  class="abutton" href="/mines/new">New game</a>
+        <span id="gameStatus"></span>
+        <button type="button" id="btToOpenOrMark" class="abutton" onclick="processModeChangeClick()">Change to mark</button>
+        <button type="button" id="btNewGame" class="abutton" onclick="processNewGameClick()">New Game</button>
     </div>
+
+    <section id="minesField">
+    </section>
 
     <section>
-        <table class='minefield'>
-            <tr th:each="row: ${mineFieldTiles}">
-                <td th:each="tile:${row}" th:attr="class=${@minesController.getTileClass(tile)}">
-                    <a th:if="${tile.isNotOpen()} and ${isPlaying}"
-                       th:attr="href='/mines?row='+${rowStat.index}+'&column='+${tileStat.index}">
-                        <span th:text="${@minesController.getTileText(tile)}"></span>
-                    </a>
-                    <span th:if="not(${tile.isNotOpen()} and ${isPlaying})"
-                          th:text="${@minesController.getTileText(tile)}"></span>
-                </td>
+        <h3>Best Scores</h3>
+        <table class="scores">
+            <thead>
+            <tr>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Date and time</th>
             </tr>
+            </thead>
+            <tbody id="scoresTableBody">
+            </tbody>
         </table>
     </section>
+
+    <script type="text/javascript">
+
+        function processModeChangeClick(){
+            let minesFieldElm= document.getElementById("minesField");
+            //minesFieldElm.innerHTML="<b>processModeChangeClick</b>";
+            fetch("/mines/jsonmark")
+                .then(response => {
+                    if(response.ok){
+                        return response.json();
+                    }else{
+                        return Promise.reject(new Error('Mode change failed. Server answered with status '+response.status));
+                    }
+                })
+                .then(field =>{
+                    if(field.marking){
+                        document.getElementById("gameStatus").innerHTML="Marking tiles";
+                        document.getElementById("btToOpenOrMark").innerHTML="Change to open";
+                    }else{
+                        document.getElementById("gameStatus").innerHTML="Opening tiles";
+                        document.getElementById("btToOpenOrMark").innerHTML="Change to mark";
+                    }
+                })
+                .catch(error => {
+                    let errorMessage = "Failed to change mode. Details:"+error;
+                    document.getElementById("minesField").innerHTML=errorMessage;
+
+                })
+        }
+
+        function processNewGameClick(){
+            let minesFieldElm= document.getElementById("minesField");
+            minesFieldElm.textContent="<i>processNewGameClick</i>";
+
+        }
+
+    </script>
+
 </main>
-
-<footer th:replace="fragments/fragments :: gsfooter"/>
-
-&lt;!&ndash;<p th:text="${@minesController.currentTime}"></p>&ndash;&gt;
-</body>
--->
-
-
-
-<!--1. verzia, bez modelu -->
-<!--
-<body>
-&lt;!&ndash;/*@thymesVar id="minesController" type="sk.tuke.gamestudio.server.controller.MinesController"*/&ndash;&gt;
-<main>
-    <h2>Minesweeper</h2>
-
-    <div class="minesControl">
-        <span th:text="${@minesController.getGameStatusMessage()}"></span>
-        <a th:if="${@minesController.marking}" class="abutton" href="/mines/mark">Change to open</a>
-        <a th:if="not ${@minesController.marking}" class="abutton" href="/mines/mark">Change to mark</a>
-        <a  class="abutton" href="/mines/new">New game</a>
-    </div>
-
-    <section th:utext="${@minesController.htmlField}">
-
-    </section>
-</main>
-&lt;!&ndash;<p th:text="${@minesController.currentTime}"></p>&ndash;&gt;
-</body>
 -->
 
 
