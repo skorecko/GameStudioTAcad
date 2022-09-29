@@ -72,8 +72,9 @@ public class MinesController {
     @ResponseBody
     public Field processUserInputJson(@RequestParam(required = false) Integer row,
                                       @RequestParam(required = false) Integer column){
-        startOrUpdateGame(row,column);
+        boolean justFinished = startOrUpdateGame(row,column);
         this.mineField.setMarking(this.marking);
+        this.mineField.setJustFinished(justFinished);
         return this.mineField;
     }
 
@@ -82,6 +83,7 @@ public class MinesController {
     public Field changeModeJson(){
         changeGameMode();
         this.mineField.setMarking(this.marking);
+        this.mineField.setJustFinished(false);
         return this.mineField;
     }
 
@@ -90,6 +92,7 @@ public class MinesController {
     public Field newGameJson(){
         startNewGame();
         this.mineField.setMarking(this.marking);
+        this.mineField.setJustFinished(false);
         return this.mineField;
     }
 
@@ -106,7 +109,18 @@ public class MinesController {
         this.mineField = new Field(9,9,3);
     }
 
-    private void startOrUpdateGame(Integer row, Integer column){
+    /**
+     * Updates the game field and other variables according to the move of the user
+     * Also adds the score to the score table if the game just ended.
+     * If the game did not start yet, starts the game.
+     * @param row row of the tile on which the user clicked
+     * @param column column of the tile on which the user clicked
+     * @return true if the game was finished in this turn (move), false otherwise.
+     */
+    private boolean startOrUpdateGame(Integer row, Integer column){
+
+        boolean justFinished = false;
+
         if(this.mineField==null){
             startNewGame();
         }
@@ -122,7 +136,9 @@ public class MinesController {
 
         }
 
-        if(this.mineField.getState()!=FieldState.PLAYING && this.isPlaying){
+
+         if(this.mineField.getState()!=FieldState.PLAYING && this.isPlaying){
+            justFinished=true;
             this.isPlaying=false;
 
             if(this.userController.isLogged() && this.mineField.getState()==FieldState.SOLVED){
@@ -139,7 +155,7 @@ public class MinesController {
                 }
             }
         }
-
+        return justFinished;
 
 
     }

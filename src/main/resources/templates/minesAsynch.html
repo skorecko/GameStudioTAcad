@@ -50,6 +50,8 @@
 
         const bestScoresUrl="/api/score/mines";
         const fieldUrl="/mines/json";
+        const newGameUrl="/mines/jsonnew";
+        const changeModeUrl="/mines/jsonmark";
 
 
         fetchAndRenderBestScores(bestScoresUrl,viewElements);
@@ -87,6 +89,11 @@
                 })
                 .then(gameFieldData =>{
                     renderGameField(gameFieldData, viewElements);
+                    viewElements.gameStatus.innerHTML=getGameStatusMessage(gameFieldData);
+                    if(gameFieldData.justFinished){
+                        console.log("justFinished");
+                        fetchAndRenderBestScores(getBestScoresJsonUrl,viewElements);
+                    }
                 })
                 .catch(error => {
                     let errorMessage = "Failed to get or render the game field. Details:"+error;
@@ -121,9 +128,17 @@
             for (let row=0;row<gameFieldData.rowCount;row++){
                 html2render+="<tr>\n";
                 for (let col=0;col<gameFieldData.columnCount;col++){
+
+                    let onClickHandling ="";
+
+                    if(gameFieldData.state=="PLAYING" && gameFieldData.tiles[row][col].state!="OPEN"){
+                        onClickHandling=`onclick='processTileClick(${row},${col})'`;
+                    }
+
+
                     html2render+=
                         `
-                        <td class ='${getTileClass(gameFieldData.tiles[row][col])}'>
+                        <td class ='${getTileClass(gameFieldData.tiles[row][col])}' ${onClickHandling}>
                             <span>
                                 ${getTileText(gameFieldData.tiles[row][col])}
                             </span>
@@ -135,7 +150,7 @@
             html2render+="</table>\n";
 
             viewElements.minesField.innerHTML=html2render;
-            console.log(html2render);
+            //console.log(html2render);
 
         }
 
@@ -171,15 +186,42 @@
             }
         }
 
+        function getGameStatusMessage(gameFieldData){
+            let gameStatus="";
+            if(gameFieldData.state== "FAILED"){
+                gameStatus="You failed.";
+            }else if(gameFieldData.state== "SOLVED"){
+                gameStatus="You won (score: "+gameFieldData.score+")";
+            }else{
+                gameStatus="Playing - ";
+                if(gameFieldData.marking){
+                    gameStatus+="marking";
+                }else{
+                    gameStatus+="opening";
+                }
+            }
+            return gameStatus;
+        }
+
+        function getModeButtonLabel(gameFieldData){
+            if(gameFieldData.marking){
+                return "Marking tiles";
+            }else{
+                return "Opening tiles";
+            }
+        }
 
 
 
+
+        function processTileClick(row,col){
+            const fieldUrlWCoords=`${fieldUrl}?row=${row}&column=${col}`;
+            fetchGameFieldAndRenderAll(fieldUrlWCoords,bestScoresUrl,viewElements);
+        }
 
 
         function processModeChangeClick(){
-            let minesFieldElm= document.getElementById("minesField");
-            //minesFieldElm.innerHTML="<b>processModeChangeClick</b>";
-            fetch("/mines/jsonmark")
+            fetch(changeModeUrl)
             .then(response => {
                 if(response.ok){
                     return response.json();
@@ -188,25 +230,17 @@
                 }
             })
             .then(field =>{
-                if(field.marking){
-                    document.getElementById("gameStatus").innerHTML="Marking tiles";
-                    document.getElementById("btToOpenOrMark").innerHTML="Change to open";
-                }else{
-                    document.getElementById("gameStatus").innerHTML="Opening tiles";
-                    document.getElementById("btToOpenOrMark").innerHTML="Change to mark";
-                }
+                viewElements.gameStatus.innerHTML=getGameStatusMessage(field);
+                viewElements.btToOpenOrMark.innerHTML=getModeButtonLabel(field);
             })
             .catch(error => {
                 let errorMessage = "Failed to change mode. Details:"+error;
-                document.getElementById("minesField").innerHTML=errorMessage;
-
+                viewElements.minesField.innerHTML=errorMessage;
             })
         }
 
         function processNewGameClick(){
-            let minesFieldElm= document.getElementById("minesField");
-            minesFieldElm.textContent="<i>processNewGameClick</i>";
-
+            fetchGameFieldAndRenderAll(newGameUrl,bestScoresUrl,viewElements);
         }
 
     </script>

@@ -19,6 +19,8 @@ public class Field {
 
     private long startTimeInMs = 0;
 
+    private boolean justFinished=false;
+
     /**
      * just for sending json
      */
@@ -208,5 +210,13 @@ public class Field {
 
     public void setMarking(boolean marking) {
         this.marking = marking;
+    }
+
+    public boolean isJustFinished() {
+        return justFinished;
+    }
+
+    public void setJustFinished(boolean justFinished) {
+        this.justFinished = justFinished;
     }
 }
